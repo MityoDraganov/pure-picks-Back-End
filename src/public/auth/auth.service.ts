@@ -57,7 +57,7 @@ export class AuthService {
   async login(userCredentials: IUser) {
     try {
       const user = await this.userModel.findOne({
-        $or: [{ username: userCredentials }, { email: userCredentials }],
+        $or: [{ username: userCredentials.username }, { email: userCredentials.email }],
       });
 
       if (!user) {

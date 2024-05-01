@@ -20,7 +20,7 @@ export class User {
 //   @Prop()
 //   pfp: string;
 
-  @Prop({default: "buyer", enum: ["buyer", "seller", "deliverer", "admin"]})
+  @Prop({default: "buyer", enum: ["buyer", "farmer", "deliverer", "admin"]})
   type: string
 }
 

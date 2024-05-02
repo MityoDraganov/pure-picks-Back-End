@@ -12,14 +12,12 @@ export class AuthService {
   private readonly saltRounds: number; // Define saltRounds here
 
   constructor(
+
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
   ) {
     this.saltRounds = +process.env.BCRYPT_SALT_ROUNDS || 10;
   }
-
-
-  
 
   async register(userCredentials: IUser) {
     try {
@@ -57,7 +55,10 @@ export class AuthService {
   async login(userCredentials: IUser) {
     try {
       const user = await this.userModel.findOne({
-        $or: [{ username: userCredentials.username }, { email: userCredentials.email }],
+        $or: [
+          { username: userCredentials.username },
+          { email: userCredentials.email },
+        ],
       });
 
       if (!user) {
@@ -77,5 +78,15 @@ export class AuthService {
     } catch (error: any) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async findUserById(userId: string) {
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new HttpException('User not found!', 404);
+    }
+
+    return user;
   }
 }

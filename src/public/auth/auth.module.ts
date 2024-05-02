@@ -18,5 +18,6 @@ dotenv.config();
       secret: process.env.JWT_SECRET,
     }),
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

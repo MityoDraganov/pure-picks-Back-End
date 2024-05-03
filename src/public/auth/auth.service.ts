@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { IUser } from 'src/Interfaces/User.interface';
 import { User } from 'src/Schemas/User.schema';
+import { CreateUserDto } from 'src/Dtos/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
     this.saltRounds = +process.env.BCRYPT_SALT_ROUNDS || 10;
   }
 
-  async register(userCredentials: IUser) {
+  async register(userCredentials: CreateUserDto) {
     try {
       if (
         await this.userModel.findOne({
@@ -52,7 +52,7 @@ export class AuthService {
     }
   }
 
-  async login(userCredentials: IUser) {
+  async login(userCredentials: CreateUserDto) {
     try {
       const user = await this.userModel.findOne({
         $or: [

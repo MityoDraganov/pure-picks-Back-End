@@ -51,15 +51,24 @@ export class ProductController {
   }
 
   @Patch(':productId')
+  @UseInterceptors(FileInterceptor('file'))
   async edit(
     @Body() productDto: ProductDto,
     @Param('productId') productId: string,
+    @Req() req: Request,
   ) {
-    return this.productService.edit(productDto, productId);
+    console.log('gere');
+    
+    const user = await this.authService.findUserById(req.userId);
+    return this.productService.edit(productDto, user, productId);
   }
 
   @Delete(':productId')
-  async delete(@Param('productId') productId: string) {
-    return this.productService.delete(productId);
+  async delete(
+    @Param('productId') productId: string,
+    @Req() req: Request,
+  ) {
+    const user = await this.authService.findUserById(req.userId);
+    return this.productService.delete(user, productId);
   }
 }

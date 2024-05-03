@@ -1,7 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+// user.schema.ts
 
-export type UserDocument = HydratedDocument<User>;
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
+
+export type UserDocument = Document & User;
 
 @Schema()
 export class User {
@@ -14,21 +16,20 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-//   @Prop()
-//   token: string;
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    default: [],
+  })
+  products: mongoose.Types.ObjectId[];
 
-//   @Prop()
-//   pfp: string;
-
-  @Prop({default: "buyer", enum: ["buyer", "farmer", "deliverer", "admin"]})
-  type: string
+  @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
+  type: string;
 }
-
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.set('toJSON', {
-  transform: function(doc, ret) {
+  transform: function (doc, ret) {
     delete ret.password;
-  }
+  },
 });

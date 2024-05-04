@@ -57,7 +57,6 @@ export class ProductController {
     @Param('productId') productId: string,
     @Req() req: Request,
   ) {
-    console.log('gere');
     
     const user = await this.authService.findUserById(req.userId);
     return this.productService.edit(productDto, user, productId);

@@ -28,7 +28,11 @@ export class Product {
   @Prop({ required: true, min: 0, max: 5 })
   ratings: number[];
 
-
+  @Prop({
+    required: true,
+    enum: ['vegetables', 'fruits', 'dairy', 'meats', 'other'],
+  })
+  category: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

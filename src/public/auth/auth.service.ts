@@ -46,7 +46,7 @@ export class AuthService {
         iat: Math.floor(Date.now() / 1000),
       });
 
-      return { user, token };
+      return { ...user.toJSON(), token };
     } catch (error: any) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

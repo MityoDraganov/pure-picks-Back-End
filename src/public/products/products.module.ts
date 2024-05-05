@@ -12,7 +12,9 @@ import { FirebaseModule } from 'src/firebase/firebase.module';
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     AuthModule,
-    FirebaseModule
+    FirebaseModule,
+    ProductModule
   ],
+  exports: [ProductService]
 })
 export class ProductModule {}

@@ -77,7 +77,6 @@ export class ProductService {
       }
 
       console.log(product);
-      
 
       if (product.seller.toString() !== user._id.toString()) {
         throw new HttpException(
@@ -95,7 +94,7 @@ export class ProductService {
 
       console.log(product);
 
-      await product.save(); // Save the updated document    
+      await product.save(); // Save the updated document
       return product;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -122,5 +121,15 @@ export class ProductService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async findById(productId: string) {
+    const product = await this.productModel.findById(productId);
+
+    if (!product) {
+      throw new HttpException('Product not found!', 404);
+    }
+
+    return product;
   }
 }

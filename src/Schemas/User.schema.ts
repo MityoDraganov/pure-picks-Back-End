@@ -22,6 +22,12 @@ export class User {
   })
   products: mongoose.Types.ObjectId[];
 
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+    default: [],
+  })
+  orders: mongoose.Types.ObjectId[];
+
   @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
   type: string;
 }

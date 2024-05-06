@@ -4,7 +4,7 @@ import { IProduct } from 'src/Interfaces/Product.interface';
 
 export class OrderDto {
   @IsNotEmpty()
-  products: [{
+  orderedItems: [{
     product: IProduct,
     quantity: number
   }]

@@ -21,13 +21,13 @@ export class OrdersService {
   async create(buyer: UserDocument, orderDto: OrderDto) {
     let total = 0;
 
-    for (const item of orderDto.products) {
+    for (const item of orderDto.orderedItems) {
       const productDB = await this.productService.findById(item.product._id);
       total += productDB.price * item.quantity;
     }
     const order = await this.ordersModel.create({
       buyer,
-      orderedItems: orderDto,
+      orderedItems: orderDto.orderedItems,
       totalCp: total
     });
 

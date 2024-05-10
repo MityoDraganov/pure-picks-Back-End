@@ -7,19 +7,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get(':userId')
-  async getProfileData(
-    @Param('userId') userId: string,
-  ){
-    return this.authService.findUserById(userId)
+  async getProfileData(@Param('userId') userId: string) {
+    return this.authService.findUserById(userId);
   }
 
-  
   @Patch()
-  async edit(
-    @Body() createUserDto: CreateUserDto,
-    @Req() req: Request,
-  ) {
-    
+  async edit(@Body() createUserDto: CreateUserDto, @Req() req: Request) {
     //const user = await this.authService.findUserById(req.userId);
     //return this.productService.edit(productDto, user, productId);
   }
@@ -33,4 +26,10 @@ export class AuthController {
   async login(@Body() createUserDto: CreateUserDto) {
     return this.authService.login(createUserDto);
   }
+
+  @Post('/verification/request')
+  async requestVerification() {}
+
+  @Post('/verification/accept')
+  async acceptVerification() { }
 }

@@ -10,9 +10,10 @@ import {
   Query,
   Req,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 
 import { ProductDto } from 'src/Dtos/product.dto';
@@ -40,12 +41,14 @@ export class ProductController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FilesInterceptor('files'))
   async create(
     @Body() productDto: ProductDto,
     @Req() req: Request,
-    @UploadedFile() content: any,
-  ) {
+    @UploadedFiles() content: any,
+  ) {    
+    console.log(content);
+    
     const user = await this.authService.findUserById(req.userId);
     return this.productService.create(productDto, user, content);
   }

@@ -89,4 +89,12 @@ export class AuthService {
 
     return user;
   }
+
+  async requestVerification(userId: string){
+    
+  }
+
+  async acceptVerification(userId: string){
+
+  }
 }

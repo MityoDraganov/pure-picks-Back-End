@@ -30,6 +30,9 @@ export class User {
 
   @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
   type: string;
+
+  @Prop({required: true, enum: ["Verified", "Pending", "Non-verified"], default: "Non-verified"})
+  VerifiedStatus: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

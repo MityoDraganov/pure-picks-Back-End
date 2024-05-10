@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsObject } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -15,4 +15,16 @@ export class CreateUserDto {
 
   // pfp: File;
   type: string;
+}
+
+export class RequestVerification {
+  @IsNotEmpty()
+  documents: File[];
+
+  @IsNotEmpty()
+  @IsObject()
+  sellerLocation: {
+    latitude: number;
+    longitude: number;
+  };
 }

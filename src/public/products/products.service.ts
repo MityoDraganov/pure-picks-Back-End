@@ -39,7 +39,7 @@ export class ProductService {
     }
   }
 
-  async create(productData: ProductDto, user: UserDocument, content: File) {
+  async create(productData: ProductDto, user: UserDocument, content: File[]) {
     try {
       if (user.type !== 'farmer') {
         throw new HttpException(
@@ -47,14 +47,23 @@ export class ProductService {
           HttpStatus.FORBIDDEN,
         );
       }
-      if (!content) {
+      if (!content || content.length === 0) {
         throw new HttpException('File required!', 404);
       }
-      const contentUrl = await this.firebaseService.uploadFile(content);
+      const contentUrls = await Promise.all(
+        content.map(async (file) => {
+          const contentUrl = await this.firebaseService.uploadFile(file);
+          return contentUrl;
+        })
+      );
+
+      console.log(contentUrls);
+      
+
       const product = await this.productModel.create({
         ...productData,
         seller: user,
-        contentUrls: [contentUrl],
+        contentUrls: contentUrls,
       });
       user.products.push(product._id);
       await user.save();
@@ -76,8 +85,6 @@ export class ProductService {
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
       }
 
-      console.log(product);
-
       if (product.seller.toString() !== user._id.toString()) {
         throw new HttpException(
           'You are not authorized to edit this product',
@@ -91,8 +98,6 @@ export class ProductService {
           product[key] = productData[key];
         }
       }
-
-      console.log(product);
 
       await product.save(); // Save the updated document
       return product;

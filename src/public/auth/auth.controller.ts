@@ -12,7 +12,7 @@ import {
 import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
 import { AuthService } from './auth.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { requestVerification } from '../../../../pure-picks/client/src/api/requests';
+
 import { Request } from 'express';
 
 @Controller('auth')

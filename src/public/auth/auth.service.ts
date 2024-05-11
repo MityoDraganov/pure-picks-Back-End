@@ -5,14 +5,13 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/Schemas/User.schema';
-import { CreateUserDto } from 'src/Dtos/auth.dto';
+import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
 
 @Injectable()
 export class AuthService {
   private readonly saltRounds: number; // Define saltRounds here
 
   constructor(
-
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
   ) {
@@ -80,21 +79,24 @@ export class AuthService {
     }
   }
 
+  async requestVerification(
+    userId: string,
+    documents: File[],
+    verificationDto: RequestVerification,
+  ) {
+    const user = await this.findUserById(userId);
+    user.VerifiedStatus = 'Pending';
+  }
+
+  async acceptVerification(userId: string) {}
+
   async findUserById(userId: string) {
-    const user = (await this.userModel.findById(userId))
+    const user = await this.userModel.findById(userId);
 
     if (!user) {
       throw new HttpException('User not found!', 404);
     }
 
     return user;
-  }
-
-  async requestVerification(userId: string){
-    
-  }
-
-  async acceptVerification(userId: string){
-
   }
 }

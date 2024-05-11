@@ -31,8 +31,15 @@ export class User {
   @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
   type: string;
 
-  @Prop({required: true, enum: ["Verified", "Pending", "Non-verified"], default: "Non-verified"})
+  @Prop({
+    required: true,
+    enum: ['Verified', 'Pending', 'Non-verified'],
+    default: 'Non-verified',
+  })
   VerifiedStatus: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Order' })
+  location: mongoose.Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

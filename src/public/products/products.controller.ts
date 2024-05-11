@@ -54,7 +54,7 @@ export class ProductController {
   }
 
   @Patch(':productId')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FilesInterceptor('files'))
   async edit(
     @Body() productDto: ProductDto,
     @Param('productId') productId: string,

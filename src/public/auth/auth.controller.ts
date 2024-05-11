@@ -1,6 +1,19 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { CreateUserDto } from 'src/Dtos/auth.dto';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
 import { AuthService } from './auth.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { requestVerification } from '../../../../pure-picks/client/src/api/requests';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -28,8 +41,19 @@ export class AuthController {
   }
 
   @Post('/verification/request')
-  async requestVerification() {}
+  @UseInterceptors(FilesInterceptor('documents'))
+  async requestVerification(
+    @Body() verificationDto: RequestVerification,
+    @Req() req: Request,
+    @UploadedFiles() documents: any,
+  ) {
+    return this.authService.requestVerification(
+      req.userId,
+      documents,
+      verificationDto,
+    );
+  }
 
   @Post('/verification/accept')
-  async acceptVerification() { }
+  async acceptVerification() {}
 }

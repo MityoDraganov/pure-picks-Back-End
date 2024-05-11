@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/Schemas/User.schema';
 import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
+import { MarketplaceService } from '../marketplace/marketplace.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,8 @@ export class AuthService {
 
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @Inject(MarketplaceService)
+    private readonly marketplaceService: MarketplaceService,
     private readonly jwtService: JwtService,
   ) {
     this.saltRounds = +process.env.BCRYPT_SALT_ROUNDS || 10;
@@ -84,8 +87,22 @@ export class AuthService {
     documents: File[],
     verificationDto: RequestVerification,
   ) {
-    const user = await this.findUserById(userId);
-    user.VerifiedStatus = 'Pending';
+    try {
+      const user = await this.findUserById(userId);
+
+      const marketPlaceSettings = await this.marketplaceService.create(
+        documents,
+        verificationDto,
+      );
+      user.VerifiedStatus = 'Pending';
+      user.marketplaceSettings = marketPlaceSettings;
+
+      await user.save();
+
+      return user;
+    } catch (err: any) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async acceptVerification(userId: string) {}

@@ -2,6 +2,10 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import {
+  MarketplaceSettings,
+  MarketplaceSettingsSchema,
+} from './MarketplaceSettings.schema';
 
 export type UserDocument = Document & User;
 
@@ -38,8 +42,13 @@ export class User {
   })
   VerifiedStatus: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Order' })
-  location: mongoose.Types.ObjectId;
+  @Prop({
+    type: MarketplaceSettingsSchema,
+    required: function () {
+      return this.type === "farmer" ? true : false;
+    },
+  })
+  marketplaceSettings: MarketplaceSettings;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import * as dotenv from 'dotenv';
-dotenv.config();
 
 //middlewears
 import { AuthMiddleware } from "./middlewears/Auth.middlewear";
@@ -17,6 +16,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { FirebaseModule } from './firebase/firebase.module';
 import { JwtModule } from '@nestjs/jwt';
 
+dotenv.config();
 
 @Module({
   imports: [
@@ -34,6 +34,6 @@ import { JwtModule } from '@nestjs/jwt';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('/products', "/orders");
+    consumer.apply(AuthMiddleware).forRoutes('/products', "/orders", "/auth/verification");
   }
 }

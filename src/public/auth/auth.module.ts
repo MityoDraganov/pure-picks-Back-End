@@ -8,7 +8,7 @@ import { User, UserSchema } from 'src/Schemas/User.schema';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
-import { LocationModule } from '../location/location.module';
+import { MarketplaceModule } from '../marketplace/marketplace.module';
 
 @Module({
   providers: [AuthService],
@@ -18,7 +18,7 @@ import { LocationModule } from '../location/location.module';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
-    LocationModule,
+    MarketplaceModule,
   ],
   exports: [AuthService],
 })

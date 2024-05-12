@@ -20,20 +20,15 @@ export class User {
   @Prop({ required: true })
   email: string;
 
+  @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
+  type: string;
+
+  //seller
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     default: [],
   })
   products: mongoose.Types.ObjectId[];
-
-  @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
-    default: [],
-  })
-  orders: mongoose.Types.ObjectId[];
-
-  @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
-  type: string;
 
   @Prop({
     required: true,
@@ -45,10 +40,25 @@ export class User {
   @Prop({
     type: MarketplaceSettingsSchema,
     required: function () {
-      return this.type === "farmer" ? true : false;
+      return this.type === 'farmer' ? true : false;
     },
   })
   marketplaceSettings: MarketplaceSettings;
+
+  // buyer
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+    default: [],
+  })
+  orders: mongoose.Types.ObjectId[];
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    default: [],
+  })
+  savedProducts: mongoose.Types.ObjectId[];
+  //
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

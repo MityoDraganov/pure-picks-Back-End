@@ -40,15 +40,16 @@ export class ProductController {
     }
   }
 
+  // --Seller--
   @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async create(
     @Body() productDto: ProductDto,
     @Req() req: Request,
     @UploadedFiles() content: any,
-  ) {    
+  ) {
     console.log(content);
-    
+
     const user = await this.authService.findUserById(req.userId);
     return this.productService.create(productDto, user, content);
   }
@@ -60,17 +61,32 @@ export class ProductController {
     @Param('productId') productId: string,
     @Req() req: Request,
   ) {
-    
     const user = await this.authService.findUserById(req.userId);
     return this.productService.edit(productDto, user, productId);
   }
 
   @Delete(':productId')
-  async delete(
-    @Param('productId') productId: string,
-    @Req() req: Request,
-  ) {
+  async delete(@Param('productId') productId: string, @Req() req: Request) {
     const user = await this.authService.findUserById(req.userId);
     return this.productService.delete(user, productId);
+  }
+
+  // --Buyer--
+  @Post('/favourite/:productId')
+  async addFavourite(
+    @Req() req: Request,
+    @Param('productId') productId: string,
+  ) {
+    const user = await this.authService.findUserById(req.userId);
+    return this.productService.addFavourite(user, productId);
+  }
+
+  @Delete('/favourite/:productId')
+  async removeFavourite(
+    @Req() req: Request,
+    @Param('productId') productId: string,
+  ) {
+    const user = await this.authService.findUserById(req.userId);
+    return this.productService.removeFavourite(user, productId);
   }
 }

@@ -27,6 +27,16 @@ export class ProductService {
     }
   }
 
+  async findById(productId: string) {
+    const product = await this.productModel.findById(productId);
+
+    if (!product) {
+      throw new HttpException('Product not found!', 404);
+    }
+
+    return product;
+  }
+
   async getBySeller(sellerId: string) {
     try {
       const products = await this.productModel
@@ -39,6 +49,7 @@ export class ProductService {
     }
   }
 
+  // --Seller--
   async create(productData: ProductDto, user: UserDocument, content: File[]) {
     try {
       if (user.type !== 'farmer') {
@@ -54,11 +65,10 @@ export class ProductService {
         content.map(async (file) => {
           const contentUrl = await this.firebaseService.uploadFile(file);
           return contentUrl;
-        })
+        }),
       );
 
       console.log(contentUrls);
-      
 
       const product = await this.productModel.create({
         ...productData,
@@ -128,13 +138,30 @@ export class ProductService {
     }
   }
 
-  async findById(productId: string) {
-    const product = await this.productModel.findById(productId);
+  // --Buyer--
+  async addFavourite(user: UserDocument, productId: string) {
+    const product = await this.findById(productId);
 
-    if (!product) {
-      throw new HttpException('Product not found!', 404);
+    if(user.savedProducts.includes(product._id)){
+      throw new HttpException('Product already saved!', 400);
     }
 
-    return product;
+    user.savedProducts.push(product._id);
+    await user.save();
+
+    return user;
+  }
+
+  async removeFavourite(user: UserDocument, productId: string) {
+    const product = await this.findById(productId);
+
+    if(!user.savedProducts.includes(product._id)){
+      throw new HttpException('Product not saved saved!', 400);
+    }
+
+    user.savedProducts.filter(x => x._id !== product._id)
+    await user.save();
+
+    return user;
   }
 }

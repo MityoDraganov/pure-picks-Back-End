@@ -155,11 +155,11 @@ export class ProductService {
   async removeFavourite(user: UserDocument, productId: string) {
     const product = await this.findById(productId);
 
-    if(!user.savedProducts.includes(product._id)){
-      throw new HttpException('Product not saved saved!', 400);
+    if (!user.savedProducts.includes(product._id)) {
+      throw new HttpException('Product not saved!', 400);
     }
 
-    user.savedProducts.filter(x => x._id !== product._id)
+    user.savedProducts = user.savedProducts.filter(savedProduct => savedProduct.toString() !== productId);
     await user.save();
 
     return user;

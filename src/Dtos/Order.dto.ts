@@ -1,11 +1,14 @@
-import { IsNotEmpty} from 'class-validator';
-import { IProduct } from 'src/Interfaces/Product.interface';
-
+import { ICart } from '../../dist/pure-picks/client/src/Interfaces/Cart.interface';
+import { IsNotEmpty } from 'class-validator';
 
 export class OrderDto {
   @IsNotEmpty()
-  orderedItems: [{
-    product: IProduct,
-    quantity: number
-  }]
+  orderedItems: ICart[]
+
+  @IsNotEmpty()
+  deliveryAddress: {
+    latitude: number;
+    longitude: number;
+  }
+  deliveryNote: string;
 }

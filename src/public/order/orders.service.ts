@@ -27,8 +27,8 @@ export class OrdersService {
     }
     const order = await this.ordersModel.create({
       buyer,
-      orderedItems: orderDto.orderedItems,
-      totalCp: total
+      totalCp: total,
+      ...orderDto
     });
 
 

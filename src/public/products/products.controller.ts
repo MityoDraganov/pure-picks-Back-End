@@ -48,8 +48,6 @@ export class ProductController {
     @Req() req: Request,
     @UploadedFiles() content: any,
   ) {
-    console.log(content);
-
     const user = await this.authService.findUserById(req.userId);
     return this.productService.create(productDto, user, content);
   }

@@ -1,7 +1,14 @@
+import { DeliveryAddress, DeliveryAddressSchema } from './DeliveryAddress.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { Product } from './Product.schema';
 import { User } from './User.schema';
 import mongoose from 'mongoose';
-import { Product } from './Product.schema';
+
+//schemas
+
+
+
 
 @Schema()
 export class Order {
@@ -23,6 +30,12 @@ export class Order {
     product: Product,
     quantity: number
   }]
+
+  @Prop({ type: DeliveryAddressSchema, required: true })
+  deliveryAddress: DeliveryAddress;
+
+  @Prop()
+  deliveryNote: string;
 
   @Prop({ default: Date.now, required: true, type: Date })
   readonly putDate: Date;

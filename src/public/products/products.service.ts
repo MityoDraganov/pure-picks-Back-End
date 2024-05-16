@@ -67,9 +67,7 @@ export class ProductService {
           return contentUrl;
         }),
       );
-
-      console.log(contentUrls);
-
+      
       const product = await this.productModel.create({
         ...productData,
         seller: user,

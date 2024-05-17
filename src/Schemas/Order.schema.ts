@@ -15,7 +15,7 @@ export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   buyer: User;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User'})
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null})
   deliverer: User;
 
   @Prop({

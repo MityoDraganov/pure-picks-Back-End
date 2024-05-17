@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { OrderController } from './orders.controller';
+import { Order, OrderSchema } from 'src/Schemas/Order.schema';
 
 import { AuthModule } from '../auth/auth.module';
-import { OrdersService } from './orders.service';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Order, OrderSchema } from 'src/Schemas/Order.schema';
+import { OrderController } from './orders.controller';
+import { OrdersService } from './orders.service';
 import { ProductModule } from '../products/products.module';
 
 @Module({
@@ -13,7 +13,8 @@ import { ProductModule } from '../products/products.module';
   imports: [
     AuthModule,
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
-    ProductModule
+    ProductModule,
   ],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

@@ -1,16 +1,20 @@
 // user.schema.ts
 
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
 import {
   MarketplaceSettings,
   MarketplaceSettingsSchema,
 } from './MarketplaceSettings.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
+
+import { IOrder } from '../../../pure-picks/client/src/Interfaces/Order.interface';
 
 export type UserDocument = Document & User;
 
 @Schema()
 export class User {
+
+  // --ALL--
   @Prop({ required: true })
   username: string;
 
@@ -23,7 +27,7 @@ export class User {
   @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
   type: string;
 
-  //seller
+  // --Seller--
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     default: [],
@@ -45,8 +49,7 @@ export class User {
   })
   marketplaceSettings: MarketplaceSettings;
 
-  // buyer
-
+  // --Buyer--
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
     default: [],
@@ -58,7 +61,25 @@ export class User {
     default: [],
   })
   savedProducts: mongoose.Types.ObjectId[];
-  //
+
+
+  // --Deliverer--
+  @Prop({
+    required: function () {
+      return this.type === 'deliverer' ? true : false;
+    },
+    default: false,
+  })
+  avaliableForDelivery: boolean;
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+    required: function () {
+      return this.type === 'deliverer' ? true : false;
+    },
+    default: false,
+  })
+  assignedDeliveries: mongoose.Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

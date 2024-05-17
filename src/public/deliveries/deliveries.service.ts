@@ -1,16 +1,20 @@
+
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/Schemas/User.schema';
 
 import { OrdersService } from '../order/orders.service';
+import { PusherService } from '../pusher/pusher.service';
+import { IOrder } from 'src/Interfaces/IOrder.interface';
+
 
 @Injectable()
 export class DeliveriesService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    @Inject(OrdersService)
-    private readonly ordersService: OrdersService,
+    @Inject(PusherService)
+    private readonly pusherService: PusherService,
   ) {}
 
   //Receiver
@@ -28,29 +32,32 @@ export class DeliveriesService {
     return user;
   }
 
-  async assignDelivererToOrder(user: UserDocument) {
-    const avaliableOrders = await this.ordersService.getUnassignedOrders();
-    const chosenOrder = avaliableOrders[0];
+  async assignDelivererToOrder(order: IOrder) {
+    const avaliableDeliverers = await this.userModel.find({assignedDeliveries: null})
+    const chosenDeliverer = avaliableDeliverers[0];
 
-    await this.ordersService.assignDeliverer(user._id, chosenOrder._id);
-    user.assignedDeliveries.push(chosenOrder._id);
-    await user.save();
+    await chosenDeliverer.assignedDeliveries.push(order._id)
+    await chosenDeliverer.save();
 
-    return await user.populate('assignedDeliveries');
+
+    //trigger pusher
+    await this.pusherService.triggerEvent(chosenDeliverer._id.toString(), "order-assigned", order)
   }
 
-  async unassignDelivererFromOrder(
-    user: UserDocument,
-    orderId: Types.ObjectId,
-  ) {
-    await this.ordersService.unassignDeliverer(orderId);
+  // async unassignDelivererFromOrder(
+  //   user: UserDocument,
+  //   orderId: Types.ObjectId,
+  // ) {
+  //   await this.ordersService.unassignDeliverer(orderId);
 
-    const updatedOrders = user.assignedDeliveries.filter(
-      (x) => x._id !== orderId,
-    );
-    user.assignedDeliveries = updatedOrders;
-    await user.save();
+  //   const updatedOrders = user.assignedDeliveries.filter(
+  //     (x) => x._id !== orderId,
+  //   );
+  //   user.assignedDeliveries = updatedOrders;
+  //   await user.save();
 
-    return await user.populate('assignedDeliveries');
-  }
+  //   //normal request (made from deliverer)
+
+  //   return await user.populate('assignedDeliveries');
+  // }
 }

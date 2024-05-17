@@ -5,6 +5,7 @@ import { OrderDto } from 'src/Dtos/Order.dto';
 import { Order } from 'src/Schemas/Order.schema';
 import { UserDocument } from 'src/Schemas/User.schema';
 import { ProductService } from '../products/products.service';
+import { DeliveriesService } from '../deliveries/deliveries.service';
 
 @Injectable()
 export class OrdersService {
@@ -12,6 +13,8 @@ export class OrdersService {
     @InjectModel(Order.name) private readonly ordersModel: Model<Order>,
     @Inject(ProductService)
     private readonly productService: ProductService,
+    @Inject(DeliveriesService)
+    private readonly deliveriesService: DeliveriesService,
   ) {}
 
   async create(buyer: UserDocument, orderDto: OrderDto) {
@@ -30,6 +33,8 @@ export class OrdersService {
     buyer.orders.push(order._id);
     await buyer.save();
 
+    await this.deliveriesService.assignDelivererToOrder(order);
+
     return order;
   }
 
@@ -39,15 +44,17 @@ export class OrdersService {
     return await this.ordersModel.find({ buyer: userId });
   }
 
-  async getUnassignedOrders(){
-    return await this.ordersModel.find({deliverer: null})
+  async getUnassignedOrders() {
+    return await this.ordersModel.find({ deliverer: null });
   }
 
-  async assignDeliverer(delivererId: string, orderId: Types.ObjectId){
-    await this.ordersModel.findByIdAndUpdate(orderId, {deliverer: delivererId})
+  async assignDeliverer(delivererId: string, orderId: Types.ObjectId) {
+    await this.ordersModel.findByIdAndUpdate(orderId, {
+      deliverer: delivererId,
+    });
   }
 
-  async unassignDeliverer(orderId: Types.ObjectId){
-    await this.ordersModel.findByIdAndUpdate(orderId, {deliverer: null})
+  async unassignDeliverer(orderId: Types.ObjectId) {
+    await this.ordersModel.findByIdAndUpdate(orderId, { deliverer: null });
   }
 }

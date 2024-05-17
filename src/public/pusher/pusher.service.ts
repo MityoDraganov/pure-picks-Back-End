@@ -1,12 +1,11 @@
-// pusher.service.ts
-import { Injectable, Inject } from '@nestjs/common';
-import Pusher from 'pusher';
+import { Injectable } from '@nestjs/common';
+import { PusherService as NestJsPusherService } from 'nestjs-pusher';
 
 @Injectable()
 export class PusherService {
-  constructor(@Inject('PUSHER_INSTANCE') private pusherClient: Pusher) {}
+  constructor(private readonly pusherService: NestJsPusherService) {}
 
   async triggerEvent(channel: string, event: string, data: any): Promise<void> {
-    await this.pusherClient.trigger(channel, event, data);
+    await this.pusherService.trigger(channel, event, data);
   }
 }

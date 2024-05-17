@@ -43,5 +43,5 @@ export class Order {
   @Prop({required: true })
   totalCp: number;
 }
-
+export type OrderDocument = Document & Order;
 export const OrderSchema = SchemaFactory.createForClass(Order);

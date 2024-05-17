@@ -1,5 +1,5 @@
-import { ICart } from '../../dist/pure-picks/client/src/Interfaces/Cart.interface';
 import { IsNotEmpty } from 'class-validator';
+import { ICart } from '../Interfaces/ICart.interface';
 
 export class OrderDto {
   @IsNotEmpty()

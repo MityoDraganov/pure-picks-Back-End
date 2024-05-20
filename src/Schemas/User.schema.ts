@@ -75,7 +75,7 @@ export class User {
     required: function () {
       return this.type === 'deliverer' ? true : false;
     },
-    default: false,
+    default: [],
   })
   assignedDeliveries: mongoose.Types.ObjectId[];
 }

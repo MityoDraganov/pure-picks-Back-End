@@ -33,12 +33,14 @@ export class DeliveriesService {
   }
 
   async assignDelivererToOrder(order: IOrder) {
-    const avaliableDeliverers = await this.userModel.find({assignedDeliveries: null})
+    const avaliableDeliverers = await this.userModel.find({avaliableForDelivery: true})
     const chosenDeliverer = avaliableDeliverers[0];
 
-    await chosenDeliverer.assignedDeliveries.push(order._id)
+    chosenDeliverer.assignedDeliveries.push(order._id)
     await chosenDeliverer.save();
 
+    console.log(chosenDeliverer);
+    
 
     //trigger pusher
     await this.pusherService.triggerEvent(chosenDeliverer._id.toString(), "order-assigned", order)

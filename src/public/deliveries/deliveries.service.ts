@@ -1,13 +1,11 @@
-
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { User, UserDocument } from 'src/Schemas/User.schema';
 
-import { OrdersService } from '../order/orders.service';
 import { PusherService } from '../pusher/pusher.service';
 import { IOrder } from 'src/Interfaces/IOrder.interface';
-
+import { OrderDocument } from 'src/Schemas/Order.schema';
 
 @Injectable()
 export class DeliveriesService {
@@ -32,18 +30,35 @@ export class DeliveriesService {
     return user;
   }
 
-  async assignDelivererToOrder(order: IOrder) {
-    const avaliableDeliverers = await this.userModel.find({avaliableForDelivery: true})
-    const chosenDeliverer = avaliableDeliverers[0];
+  async sendDeliveryToDeliverers(order: IOrder) {
+    const avaliableDeliverers = await this.userModel.find({
+      avaliableForDelivery: true,
+    });
 
-    chosenDeliverer.assignedDeliveries.push(order._id)
-    await chosenDeliverer.save();
+    avaliableDeliverers.forEach(async (deliverer) => {
+      await this.pusherService.triggerEvent(
+        deliverer._id.toString(),
+        'order-receive',
+        order,
+      );
+    });
+  }
 
-    console.log(chosenDeliverer);
-    
+  async assignDelivererToOrder(order: IOrder, deliverer: UserDocument) {
+    const avaliableDeliverers = await this.userModel.find({
+      avaliableForDelivery: true,
+    });
+    //const chosenDeliverer = avaliableDeliverers[0];
+
+    deliverer.assignedDeliveries.push(order._id);
+    await deliverer.save();
 
     //trigger pusher
-    await this.pusherService.triggerEvent(chosenDeliverer._id.toString(), "order-assigned", order)
+    await this.pusherService.triggerEvent(
+      deliverer._id.toString(),
+      'order-assigned',
+      order,
+    );
   }
 
   // async unassignDelivererFromOrder(

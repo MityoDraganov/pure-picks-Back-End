@@ -61,7 +61,7 @@ export class AuthService {
           { username: userCredentials.username },
           { email: userCredentials.email },
         ],
-      });
+      }).populate("orders");
 
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -115,5 +115,15 @@ export class AuthService {
     }
 
     return user;
+  }
+
+    async findUserByIdLEAN(userId: string) {
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new HttpException('User not found!', 404);
+    }
+
+    return user.toJSON();
   }
 }

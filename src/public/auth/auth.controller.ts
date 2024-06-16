@@ -21,7 +21,7 @@ export class AuthController {
 
   @Get(':userId')
   async getProfileData(@Param('userId') userId: string) {
-    return this.authService.findUserById(userId);
+    return this.authService.findUserByIdLEAN(userId);
   }
 
   @Patch()

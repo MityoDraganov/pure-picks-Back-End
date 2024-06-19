@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsEmail, IsObject, IsNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsString,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -28,4 +34,22 @@ export class RequestVerification {
   @IsNotEmpty()
   @IsNumber()
   longitude: number;
+}
+
+export class LoginAdminDto {
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+}
+
+
+export class AdminLoginDto {
+  email: string;
+  password: string;
 }

@@ -5,8 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/Schemas/User.schema';
-import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
+import { AdminLoginDto, CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
 import { MarketplaceService } from '../marketplace/marketplace.service';
+
 
 @Injectable()
 export class AuthService {
@@ -56,12 +57,14 @@ export class AuthService {
 
   async login(userCredentials: CreateUserDto) {
     try {
-      const user = await this.userModel.findOne({
-        $or: [
-          { username: userCredentials.username },
-          { email: userCredentials.email },
-        ],
-      }).populate("orders");
+      const user = await this.userModel
+        .findOne({
+          $or: [
+            { username: userCredentials.username },
+            { email: userCredentials.email },
+          ],
+        })
+        .populate('orders');
 
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -117,7 +120,7 @@ export class AuthService {
     return user;
   }
 
-    async findUserByIdLEAN(userId: string) {
+  async findUserByIdLEAN(userId: string) {
     const user = await this.userModel.findById(userId);
 
     if (!user) {
@@ -125,5 +128,36 @@ export class AuthService {
     }
 
     return user.toJSON();
+  }
+
+  // --ADMIN ACTIONS--
+
+  async getAllUsers() {
+    return await this.userModel.find().lean();
+  }
+
+  async adminLogin(adminCredentials: AdminLoginDto) {
+    try {
+      const admin = await this.userModel.findOne({
+        email: adminCredentials.email,
+        type: 'admin',
+      });
+      if (!admin) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (!(await bcrypt.compare(adminCredentials.password, admin.password))) {
+        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      }
+
+      const token = await this.jwtService.sign({
+        _id: admin._id,
+        iat: Math.floor(Date.now() / 1000),
+      });
+
+      return { ...admin.toJSON(), token };
+    } catch (error: any) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

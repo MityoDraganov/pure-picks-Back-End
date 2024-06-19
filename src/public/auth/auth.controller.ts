@@ -9,11 +9,12 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
+import { AdminLoginDto, CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
 import { AuthService } from './auth.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { Request } from 'express';
+
 
 @Controller('auth')
 export class AuthController {
@@ -56,4 +57,15 @@ export class AuthController {
 
   @Post('/verification/accept')
   async acceptVerification() {}
+
+  // --ADMIN ACTIONS--
+    @Post('admin/login')
+  async adminLogin(@Body() adminLogin: AdminLoginDto) {
+    return this.authService.adminLogin(adminLogin);
+  }
+
+  @Get()
+  async getAllUsers(){
+    return this.authService.getAllUsers()
+  }
 }

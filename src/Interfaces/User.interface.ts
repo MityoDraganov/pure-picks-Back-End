@@ -7,3 +7,4 @@ export interface IUser {
   type: string;
   products: mongoose.Types.ObjectId[];
 }
+

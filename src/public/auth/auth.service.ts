@@ -4,10 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { User } from 'src/Schemas/User.schema';
-import { AdminLoginDto, CreateUserDto, RequestVerification } from 'src/Dtos/auth.dto';
+import { User, UserDocument } from 'src/Schemas/User.schema';
+import {
+  AdminLoginDto,
+  CreateUserDto,
+  RequestVerification,
+} from 'src/Dtos/auth.dto';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-
 
 @Injectable()
 export class AuthService {
@@ -23,6 +26,7 @@ export class AuthService {
   }
 
   async register(userCredentials: CreateUserDto) {
+    console.log(userCredentials);
     try {
       if (
         await this.userModel.findOne({
@@ -42,12 +46,23 @@ export class AuthService {
       const user = await this.userModel.create({
         ...userCredentials,
         password: hash,
+        type: [userCredentials.type],
       });
+      
+      console.log('here 1');
+      
 
       const token = await this.jwtService.sign({
         _id: user._id,
         iat: Math.floor(Date.now() / 1000),
       });
+
+        console.log('here 2');
+
+      const userJson = user.toJSON();
+
+              console.log('here 3');
+      console.log('User JSON:', userJson);
 
       return { ...user.toJSON(), token };
     } catch (error: any) {
@@ -159,5 +174,15 @@ export class AuthService {
     } catch (error: any) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async promoteAdmin(user: UserDocument) {
+    if (user.type.includes('admin')) {
+      throw new HttpException('User already admin!', 409);
+    }
+
+    user.type.push('admin');
+    await user.save();
+    return user.toJSON();
   }
 }

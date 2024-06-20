@@ -52,7 +52,7 @@ export class ProductService {
   // --Seller--
   async create(productData: ProductDto, user: UserDocument, content: File[]) {
     try {
-      if (user.type !== 'farmer') {
+      if (!user.type.includes('farmer')) {
         throw new HttpException(
           'Only farmers are allowed to create products',
           HttpStatus.FORBIDDEN,

@@ -68,4 +68,12 @@ export class AuthController {
   async getAllUsers(){
     return this.authService.getAllUsers()
   }
+
+
+  @Post('admin/promoteAdmin/:userId')
+  async promoteAdmin(@Param('userId') userId: string){
+    const user = await this.authService.findUserById(userId)
+
+    return this.authService.promoteAdmin(user)
+  }
 }

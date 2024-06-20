@@ -11,7 +11,6 @@ export type UserDocument = Document & User;
 
 @Schema()
 export class User {
-
   // --ALL--
   @Prop({ required: true })
   username: string;
@@ -22,8 +21,12 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ default: 'buyer', enum: ['buyer', 'farmer', 'deliverer', 'admin'] })
-  type: string;
+  @Prop({
+    type: [String],
+    enum: ['buyer', 'farmer', 'deliverer', 'admin'],
+    default: ['buyer'],
+  })
+  type: string[];
 
   // --Seller--
   @Prop({
@@ -60,7 +63,6 @@ export class User {
   })
   savedProducts: mongoose.Types.ObjectId[];
 
-
   // --Deliverer--
   @Prop({
     required: function () {
@@ -85,6 +87,6 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.set('toJSON', {
   transform: function (doc, ret) {
     delete ret.password;
-    delete ret.marketplaceSettings.documents
+    delete ret?.marketplaceSettings?.documents;
   },
 });
